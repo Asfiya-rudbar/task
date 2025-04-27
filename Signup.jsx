@@ -21,40 +21,40 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black">
-      <div className="bg-gray-900 p-8 rounded-2xl shadow-lg w-96">
-        <h2 className="text-3xl font-bold text-white mb-6 text-center">Create Account</h2>
-        <form onSubmit={handleSignup} className="flex flex-col space-y-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-gray-900 via-black to-gray-900">
+      <div className="backdrop-blur-md bg-white/10 p-10 rounded-3xl shadow-2xl w-full max-w-md border border-gray-800">
+        <h2 className="text-4xl font-bold text-white mb-8 text-center animate-pulse">Create Account</h2>
+        <form onSubmit={handleSignup} className="flex flex-col space-y-6">
           <input
             type="email"
-            placeholder="Email"
+            placeholder="Enter your Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:border-blue-500"
+            className="p-4 rounded-xl bg-gray-800 text-white placeholder-gray-400 border-2 border-gray-700 focus:outline-none focus:border-blue-500 transition-all duration-300"
           />
           <input
             type="password"
-            placeholder="Password"
+            placeholder="Create a Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="p-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:border-blue-500"
+            className="p-4 rounded-xl bg-gray-800 text-white placeholder-gray-400 border-2 border-gray-700 focus:outline-none focus:border-blue-500 transition-all duration-300"
           />
           <button
             type="submit"
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg"
+            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-3 rounded-xl mt-4 transform hover:scale-105 transition-transform duration-300 shadow-lg"
           >
             Sign Up
           </button>
         </form>
-        <p className="text-gray-500 text-center mt-4 text-sm">
+        <p className="text-gray-400 text-center mt-6 text-sm">
           Already have an account?{" "}
           <span
             onClick={() => navigate("/login")}
-            className="text-blue-500 hover:underline cursor-pointer"
+            className="text-blue-400 hover:underline cursor-pointer"
           >
-            Login
+            Login here
           </span>
         </p>
       </div>
@@ -63,3 +63,4 @@ const Signup = () => {
 };
 
 export default Signup;
+
