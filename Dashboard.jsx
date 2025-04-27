@@ -34,7 +34,6 @@ const Dashboard = () => {
         status: "To Do",
         userId: auth.currentUser.uid,
       });
-      alert("Task added successfully!");
       setTitle("");
       setDescription("");
       fetchTasks();
@@ -48,7 +47,6 @@ const Dashboard = () => {
     const taskRef = doc(db, "tasks", taskId);
     try {
       await deleteDoc(taskRef);
-      alert("Task Deleted Successfully!");
       fetchTasks();
     } catch (error) {
       console.error("Error deleting task:", error);
@@ -59,9 +57,7 @@ const Dashboard = () => {
   const updateStatus = async (taskId, newStatus) => {
     const taskRef = doc(db, "tasks", taskId);
     try {
-      await updateDoc(taskRef, {
-        status: newStatus,
-      });
+      await updateDoc(taskRef, { status: newStatus });
       fetchTasks();
     } catch (error) {
       console.error("Error updating status:", error);
@@ -72,7 +68,6 @@ const Dashboard = () => {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      alert("Logout successful!");
       navigate("/login");
     } catch (error) {
       console.error("Error during logout:", error);
@@ -81,123 +76,94 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black p-8">
-      <div className="flex justify-between items-center mb-8">
-        <h2 className="text-3xl font-bold text-white">Dashboard - Task Manager</h2>
-        <button 
-          onClick={handleLogout} 
-          className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg"
+    <div className="min-h-screen bg-gradient-to-tr from-black via-gray-900 to-black p-6">
+      <div className="flex justify-between items-center mb-10">
+        <h1 className="text-4xl font-bold text-white">🚀 Your Task Board</h1>
+        <button
+          onClick={handleLogout}
+          className="px-5 py-2 rounded-full bg-gradient-to-r from-red-500 to-pink-600 hover:scale-105 transition-transform duration-300 text-white font-bold shadow-md"
         >
           Logout
         </button>
       </div>
 
       {/* Add Task Form */}
-      <form onSubmit={handleAddTask} className="bg-gray-900 p-6 rounded-2xl shadow-lg mb-10">
-        <div className="flex flex-col mb-4">
+      <form onSubmit={handleAddTask} className="bg-white/10 backdrop-blur-md p-8 rounded-3xl shadow-lg mb-12 max-w-3xl mx-auto">
+        <h2 className="text-2xl font-bold text-white mb-6">Add New Task</h2>
+        <div className="flex flex-col space-y-4">
           <input
             type="text"
             placeholder="Task Title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            className="border border-gray-700 bg-gray-800 text-white p-3 rounded-xl mb-4"
+            className="p-4 rounded-xl bg-gray-800 text-white placeholder-gray-400 border border-gray-700 focus:outline-none focus:border-blue-500"
           />
           <textarea
             placeholder="Task Description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             required
-            className="border border-gray-700 bg-gray-800 text-white p-3 rounded-xl mb-4"
+            className="p-4 rounded-xl bg-gray-800 text-white placeholder-gray-400 border border-gray-700 focus:outline-none focus:border-blue-500"
           ></textarea>
-          <button 
-            type="submit" 
-            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-xl"
+          <button
+            type="submit"
+            className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-3 rounded-xl hover:scale-105 transition-transform duration-300"
           >
             Add Task
           </button>
         </div>
       </form>
 
-      {/* Task Board */}
+      {/* Task Columns */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {/* To Do */}
-        <div className="bg-gray-900 p-6 rounded-2xl shadow-lg">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-2xl font-bold text-blue-400">To Do</h3>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full">+</button>
-          </div>
-          {tasks.filter(task => task.status === "To Do").map(task => (
-            <div key={task.id} className="bg-gray-800 p-4 rounded-xl mb-4">
-              <h4 className="text-white font-semibold">{task.title}</h4>
-              <p className="text-gray-400 mt-2">{task.description}</p>
-              <div className="flex mt-4 space-x-2">
-                <button 
-                  onClick={() => updateStatus(task.id, "In Progress")} 
-                  className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-1 rounded-lg"
-                >
-                  In Progress
-                </button>
-                <button 
-                  onClick={() => deleteTask(task.id)} 
-                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded-lg"
-                >
-                  Delete
-                </button>
+        {/* Column Component */}
+        {["To Do", "In Progress", "Done"].map((status, index) => (
+          <div key={index} className="bg-white/10 backdrop-blur-lg rounded-3xl p-6 shadow-xl">
+            <h3
+              className={`text-2xl font-bold mb-6 text-center ${
+                status === "To Do" ? "text-blue-400" : status === "In Progress" ? "text-yellow-400" : "text-green-400"
+              }`}
+            >
+              {status}
+            </h3>
+            {tasks.filter((task) => task.status === status).map((task) => (
+              <div
+                key={task.id}
+                className="bg-gray-800 p-5 rounded-xl mb-4 transition-transform transform hover:scale-105 hover:shadow-2xl"
+              >
+                <h4 className="text-white font-bold">{task.title}</h4>
+                <p className="text-gray-400 mt-2">{task.description}</p>
+                <div className="flex justify-between mt-4 space-x-2">
+                  {/* Move Buttons */}
+                  {task.status === "To Do" && (
+                    <button
+                      onClick={() => updateStatus(task.id, "In Progress")}
+                      className="px-4 py-1 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg font-semibold transition-all"
+                    >
+                      Move to In Progress
+                    </button>
+                  )}
+                  {task.status === "In Progress" && (
+                    <button
+                      onClick={() => updateStatus(task.id, "Done")}
+                      className="px-4 py-1 bg-green-500 hover:bg-green-600 text-white rounded-lg font-semibold transition-all"
+                    >
+                      Move to Done
+                    </button>
+                  )}
+                  {/* Delete button always */}
+                  <button
+                    onClick={() => deleteTask(task.id)}
+                    className="px-4 py-1 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition-all"
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-
-        {/* In Progress */}
-        <div className="bg-gray-900 p-6 rounded-2xl shadow-lg">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-2xl font-bold text-yellow-400">In Progress</h3>
-            <button className="bg-yellow-500 hover:bg-yellow-600 text-white p-2 rounded-full">+</button>
+            ))}
           </div>
-          {tasks.filter(task => task.status === "In Progress").map(task => (
-            <div key={task.id} className="bg-gray-800 p-4 rounded-xl mb-4">
-              <h4 className="text-white font-semibold">{task.title}</h4>
-              <p className="text-gray-400 mt-2">{task.description}</p>
-              <div className="flex mt-4 space-x-2">
-                <button 
-                  onClick={() => updateStatus(task.id, "Done")} 
-                  className="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded-lg"
-                >
-                  Done
-                </button>
-                <button 
-                  onClick={() => deleteTask(task.id)} 
-                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded-lg"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Done */}
-        <div className="bg-gray-900 p-6 rounded-2xl shadow-lg">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-2xl font-bold text-green-400">Done</h3>
-            <button className="bg-green-500 hover:bg-green-600 text-white p-2 rounded-full">+</button>
-          </div>
-          {tasks.filter(task => task.status === "Done").map(task => (
-            <div key={task.id} className="bg-gray-800 p-4 rounded-xl mb-4">
-              <h4 className="text-white font-semibold">{task.title}</h4>
-              <p className="text-gray-400 mt-2">{task.description}</p>
-              <div className="flex mt-4">
-                <button 
-                  onClick={() => deleteTask(task.id)} 
-                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded-lg"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+        ))}
       </div>
     </div>
   );
